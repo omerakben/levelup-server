@@ -1,0 +1,8 @@
+{
+  "cSpell.words": ["autopep"],
+
+  "python.linting.pylintArgs": [
+    "--load-plugins=pylint_django",
+    "--django-settings-module=levelup.settings"
+  ]
+}
