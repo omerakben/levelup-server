@@ -34,6 +34,60 @@ class GameView(ViewSet):
         serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
 
+    def create(self, request):
+        """Handle POST operations
+
+        Returns
+            Response -- JSON serialized game instance
+        """
+        gamer = Gamer.objects.get(uid=request.data["userId"])
+        game_type = GameType.objects.get(pk=request.data["gameType"])
+
+        game = Game.objects.create(
+            title=request.data["title"],
+            maker=request.data["maker"],
+            number_of_players=request.data["numberOfPlayers"],
+            skill_level=request.data["skillLevel"],
+            game_type=game_type,
+            gamer=gamer,
+        )
+        serializer = GameSerializer(game)
+        return Response(serializer.data)
+
+    def update(self, request, pk):
+        """Handle PUT requests for a game
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        game = Game.objects.get(pk=pk)
+        game.title = request.data["title"]
+        game.maker = request.data["maker"]
+        game.number_of_players = request.data["numberOfPlayers"]
+        game.skill_level = request.data["skillLevel"]
+
+        game_type = GameType.objects.get(pk=request.data["gameType"])
+        game.game_type = game_type
+        game.save()
+
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    def destroy(self, request, pk):
+        """Handle DELETE requests for a game
+
+        Returns:
+            Response -- 204 No Content or 404 Not Found
+        """
+        try:
+            game = Game.objects.get(pk=pk)
+            game.delete()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Exception as ex:
+            return Response(
+                {"message": f"Game {pk} does not exist.{ex}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
 
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games"""
