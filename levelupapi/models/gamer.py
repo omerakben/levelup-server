@@ -6,5 +6,9 @@ class Gamer(models.Model):
     Model representing a gamer.
     """
 
-    uid = models.IntegerField()
-    bio = models.CharField(max_length=100)
+    uid = models.CharField(
+        max_length=255
+    )  # Changed to CharField to store Firebase string UIDs
+    bio = models.CharField(
+        max_length=500
+    )  # Increased max_length for bio as well, just in case
